@@ -1,0 +1,162 @@
+
+= Volet architecture applicative
+:sectnumlevels: 4
+:toclevels: 4
+:sectnums: 4
+:toc: left
+:icons: font
+:toc-title: Sommaire
+
+Dernière modification : {docdate} 
+
+Etat du document : 
+
+
+== Introduction
+
+Ceci est le point de vue applicatif du projet. Il décrit les modules applicatifs en jeu et leurs échanges.
+
+Les autres volets du dossier sont accessibles link:./README.adoc[d'ici].
+
+=== Documentation de Référence
+
+.Références documentaires
+[cols="1,1,4,4"]
+|===
+|N°|Version|Titre/URL du document|Détail
+
+|1|1|https://github.com/bart120/maj3/blob/master/archilog/cahier-des-charges.pdf|Cahier des Charges
+|2|1|https://github.com/bart120/maj3/blob/master/archilog/projet.md|Sujet de l'exercice
+
+|===
+
+== Non statué
+
+=== Points soumis à étude complémentaire
+
+.Points soumis à étude complémentaire
+[cols="1e,6e,1e,1e,1e"]
+|===
+|Sujet| Détail | Statut| Porteur du sujet  | Échéance
+
+|Mettre en place l'application web
+|En fonction de l’avancement du projet Cassiopée, cette application pourrait appeler d'autre services que ceux énumérés plus bas.
+|EN_COURS
+|Projet Cassiopée
+|AVANT 2022
+|===
+
+=== Hypothèses
+
+.Hypothèses
+[cols="1e,6e"]
+|====
+|ID| Détail
+
+|HA1
+|Même si la décision d'utiliser Prestashop n'est pas défavorable, il faut améliorer l'ensemble technique pour proposer le meilleur service possible.
+|====
+
+== Contexte général
+
+=== Objectifs
+
+Mettre en place un site internet présentant l'entreprise, ses activités et ses produits ou services, vendre les produits en ligne dans un système de paiement sécurisé, créer une communauté.
+
+=== Acteurs
+
+==== Acteurs internes
+
+.Liste des acteurs internes
+[cols="1e,1e,4e,4e"]
+|===
+|Acteur|Description|Population|Localisation
+
+|Fondateurs
+|Modération du site et de la communauté, gestion du stock et ajout produit
+|2
+|Site de Paris
+
+|Prestashop
+|Agent back-office
+|N/A
+|Site de Paris
+
+|===
+
+==== Acteurs externes
+
+.Liste acteurs externes
+[cols="e,e,e,e"]
+|===
+|Acteur| Description| Population| Localisation
+
+|Client Web
+|Un client depuis un PC
+|Max 1M
+|Monde entier
+|Client mobile
+|Un client depuis un mobile
+|Max 2M
+|Monde entier
+|===
+
+== Contraintes
+
+=== Budget
+
+Enveloppe globale de 20 000€
+====
+====
+
+=== Planning
+
+MEP avant janvier 2022, validation du POC avant septembre 2021.
+====
+====
+
+=== Urbanisation
+
+Les services ne peuvent être appelés directement. Les appels se feront obligatoirement via une route exposée au niveau du bus d'entreprise qui appellera à son tour le service. Il est alors possible de contrôler, prioriser, orchestrer ou piloter les appels.
+Les composants de cette application suivent l'architecture de micro services.
+====
+====
+== Exigences
+
+Le client veut que nous utilisons le CMS Prestashop.
+Le développement devra pouvoir se faire au sein d'équipes distribuées, chacune travaillant sur des modules distincts.
+====
+====
+
+== Architecture cible
+
+=== Architecture applicative générale
+
+Le projet Cassiopée est constituée de plusieurs microservices indépendants (PrestaShop, OVH, services REST/Gql)
+====
+====
+
+=== Architecture applicative détaillée
+
+Le projet sera constitué de plusieurs technologies:
+====
+Un blog codé en Javascript avec le framework React, qui permettra :
+====
+- d'afficher differents articles lié au site afin de remonter dans l'annuaire Google
+====
+- créer un espace d'échange afin d'animer la communauté
+====
+
+Une API Rest && GraphQL codé en PHP avec le framework Laravel, elle permettra plusieurs points:
+====
+- automatiser l'agenda en créant des rappels suite à un message envoyé depuis le formulaire de contact
+====
+- gérer la partie blog pour la rédaction et modération des articles
+====
+- gérer l'ajout de code promotionnels lors de l'achat en fonction de l'utilisateur
+====
+
+Une campagne e-mailing via MailChimp pour gérer la newsletter, les utilisateurs inscrits et l'envoi de code promotionnel
+
+====
+Une base de donnée décentralisée (OVHCloud) pour gérer les perfomances lors des pics d'affluence sur le site
