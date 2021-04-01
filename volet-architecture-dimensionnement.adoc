@@ -1,0 +1,262 @@
+= Volet dimensionnement
+:sectnumlevels: 4
+:toclevels: 4
+:sectnums: 4
+:toc: left
+:icons: font
+:toc-title: Sommaire
+
+Dernière modification : {docdate}
+
+== Introduction
+
+Ceci est le point de vue dimensionnement du projet. Il permet de déterminer la taille de l'infrastructure nécessaire au projet.
+
+Les autres volets du dossier sont accessibles link:./README.adoc[d'ici].
+
+=== Documentation de Référence
+
+.Références documentaires dimensionnement
+[cols="1e,1e,4e,4e"]
+|====
+|N°|Version|Titre/URL du document|Détail
+
+|1|1|N/A|N/A
+
+
+|====
+
+
+== Non statué
+
+=== Points soumis à étude complémentaire
+
+.Points soumis à étude complémentaire
+[cols="1e,1e,1e,2e,2e"]
+|====
+|ID| Détail |Statut |Porteur du sujet  | Échéance
+
+|1| Capacité disques SSD |EN_COURS | XYZ | 01/11/2021
+|2| Puissance de la memoire vive |EN_COURS | XYZ | 01/11/2021
+|3| Puissance du processeur |EN_COURS | XYZ | 01/11/2021
+
+|====
+
+
+=== Hypothèses
+
+
+====
+.Hypothèses
+[cols="1e,4e"]
+|====
+|ID|Détail
+
+|1|Nous estimons qu'il y aura entre 100 et 1000 visiteurs constant pendant les périodes hors travail (12h-14h, 18h-22h)
+
+|====
+
+====
+
+== Contraintes
+
+=== Contraintes stockage
+
+L'espace disque maximal allouable à une VM est de 1 To en SSD.
+
+=== Contraintes CPU
+
+Une VM sera dotée au maximum de 10 VCPU.
+
+L'ensemble des pods de l'application ne devra pas demander plus de 1 CPU par node.
+
+=== Contraintes mémoire
+
+Un pod ou un job Kubernetes ne devra pas utiliser plus de 6 Go de RAM
+
+=== Contraintes réseau
+
+Pas de soucis de latence chez l'hebergeur mais le client devra avoir une bonne connexion pour charger toutes les surcouches javascript
+
+== Exigences
+
+=== Volumétrie statique
+
+
+==== Métriques
+
+[cols="e,e,e,e,e,e"]
+|====
+|Métrique|Description |Mesurée ou Estimée ? | Valeur | Augmentation annuelle prévisionnelle (%) |  Source
+
+|S1 |Taille moyenne d'une photo d'un produit ajouté | Mesurée | 1MO  | 3%| Exploitants
+|S2 |Taille moyenne d'une vidéo d'un produit ajouté | Mesurée | 50MO  | 10%| Exploitants
+|S3 |Taille de l'application backend | Mesurée | 300MO  | 0%| Exploitants
+|S4 |Taille de l'application frontend | Mesurée | 230MO  | 0%| Exploitants
+|====
+
+==== Estimation besoins de stockage
+
+Exemple de volumétrie statique du composant C :
+|====
+|Donnée|Description|Taille unitaire|Nombre d'éléments à 2 ans|Taille totale|Augmentation annuelle
+
+|Table Produits
+|Les produits du catalogue
+|2Ko
+|100K
+|200 Mo
+|5 %
+
+|Table Commande
+|Les commandes clients
+|10Ko
+|3M
+|26.6 Go
+|10 %
+
+|Table Article
+|Les articles du blog
+|10Ko
+|100
+|10 Mo
+|2 %
+
+|Table Utilisateurs
+|Les comptes des utilisateurs inscrits
+|5Ko
+|5000
+|100 Mo
+|8 %
+
+|Logs
+|Les logs applicatifs (niveau INFO)
+|200 o
+|300M
+|56 Go
+|0 % (archivage)
+|====
+
+=== Volumétrie dynamique
+
+==== Métriques
+
+[cols="e,e,e,e,e,e,e,e"]
+|====
+|Métrique|Description |Mesurée ou Estimée ? | Valeur | Augmentation annuelle prévisionnelle (%) | Saisonnalité|  Source| Détail/hypothèses
+
+|D1 |Proportion d'utilisateurs se connectant au service / J | Estimée | 1%  | +5%
+a|
+
+ - Constant sur l'année
+ - Constant sur la semaine
+ - 3 pics à 20% de la journée à 8:00-9:00, 11:00-12:00 et 14:00-15:00
+ | | Les utilisateurs sont des professionnels utilisant l'application depuis la France métropolitaine aux heures de bureau standards
+|====
+
+
+==== Estimation de la charge
+
+.Estimation volumétrie dynamique des opérations Rest/Graphql de l'application backend
+|====
+|Taux maximal d’utilisateurs connectés en même temps en pic annuel | S1 x F1 x 0.2 = 8K /H
+|Durée moyenne d'une session utilisateur
+|15 mins
+|Nombre d'appel moyen du service par session
+|10
+|Charge (Transaction / seconde)
+|8K / 4 x 10 / 3600 =  5.5 Tps
+|====
+
+
+=== Exigences de temps de réponse
+
+==== Temps de Réponse des IHM
+.Type de sollicitation :
+[cols='3e,1e,1e,1e']
+|====
+|Type de sollicitation|Bon niveau|Niveau moyen|Niveau insuffisant
+
+|Chargement d’une page
+|< 0,5 s
+|< 1 s
+|> 2 s
+
+|Opération métier
+|< 2 s
+|< 4 s
+|> 6 s
+
+|Édition, Export, Génération
+|< 3 s
+|< 6 s
+|> 15 s
+|====
+
+Le niveau de respect des exigences de temps de réponse est bon si :
+
+* Au moins 90 % des temps de réponse sont bons.
+* Au plus 2% des temps de réponse sont insuffisants.
+
+Acceptable si :
+
+* Au moins 80 % des temps de réponse sont bons.
+* Au plus 5 % des temps de réponse sont insuffisants.
+
+En dehors de ces valeurs, l’application devra être optimisée et repasser en recette puis être soumise à nouveau aux tests de charge.
+
+== Dimensionnement cible
+
+=== Estimation des besoins en ressources par composant technique
+
+.Estimation des besoins en ressources par composant technique
+[cols="2e,1e,1e,3e,2e"]
+|====
+| Unité déployable | Besoin en (V)CPU par instance| Besoin mémoire par instance (Mio) |  Périodes d'activité | Commentaires
+
+| `tomcat-batchs1`
+| <négligeable>
+| 1024
+| Toutes les heures, 24/7/365
+| Le serveur d'application reste démarré même en dehors de l'exécution des jobs
+
+| `spa`
+| <négligeable>
+| 50
+| 24/6, activité principale 8-17h Europe/Paris lun-ven
+|Appli Web SPA, s'exécute dans le navigateur
+
+| `bdd-postgresql`
+| 2
+| 2024
+| 24/7, activité principale 8-17h Europe/Paris lun-ven
+| Instance Postgresql
+|====
+
+=== Dimensionnement des machines
+
+Voir le link:./volet-architecture-infrastructure.adoc#_déploiement_en_production[modèle de déploiement].
+
+.Dimensionnement des machines
+[cols='1e,3e,1e,1e,1e,1e,1e']
+|====
+|Zone | Type de machine | Nb de machines | Nb (V)CPU  | Mémoire (Gio) | Disque interne (Gio) | Disque externe  (Gio)
+
+|DMZ 01
+|VM serveur applicatif
+|3
+|2
+|4
+|100
+|0
+
+|DMZ 02
+|Machine physique Base de données
+|1
+|2
+|6
+|50
+|1024 (SAN)
+
+
+|====

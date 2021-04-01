@@ -1,0 +1,325 @@
+
+= Volet architecture sécurité
+:sectnumlevels: 4
+:toclevels: 4
+:sectnums: 4
+:toc: left
+:icons: font
+:toc-title: Sommaire
+
+Dernière modification : {docdate}
+
+== Introduction
+
+Ceci est le point de vue sécurité. Il décrit l'ensemble des dispositifs mis en œuvre pour empêcher l'utilisation non-autorisée, le mauvais usage, la modification illégitime ou le détournement des modules applicatifs.
+
+Les autres volets du dossier sont accessibles link:./README.adoc[d'ici].
+
+=== Documentation de Référence
+
+.Références documentaires sécurité
+[cols="1e,1e,3e,3e"]
+|====
+|N°|Version|Titre/URL du document|Détail
+
+|1|1|N/A|N/A
+
+|====
+
+== Non statué
+
+=== Points soumis à étude complémentaire
+
+.Points soumis à étude complémentaire
+[cols="1e,3e,1e,1e,2e"]
+|====
+|ID|Détail|Statut|Porteur du sujet | Échéance
+
+|ES1
+|Il conviendra de valider que les dispositifs anti-CSRF mis en place résolvent également les failles liées au couplage TLS.
+|EN_COURS
+|Équipe sécurité
+|AVANT 2022
+
+|====
+
+=== Hypothèses
+
+.Hypothèses
+[cols="e,e"]
+|====
+|ID|Détail
+
+|HS1
+|La solution Prestashop est elle assez sécurisée ou devons nous ajouter une couche supplémentaire ?
+|====
+
+== Contraintes
+La politique de mot de passe devra se conformer à la norme de au minimum : 2 majuscule, 2 minuscules, et un caractère spécial
+
+== Exigences
+
+=== Exigences d'intégrité
+
+.Niveau d'intégrité exigée par classe de données
+[cols='2e,1e,1e,1e,1e']
+|====
+|Classe de données
+|Niveau « Non intègre » ([small]#La donnée peut ne pas être intègre)#
+|Niveau « Détectable » ([small]#La donnée peut ne pas être intègre si l'altération est identifiée dans un délai raisonnable)#
+|Niveau « Maîtrisé » ([small]#La donnée peut ne pas être intègre, si l'altération est identifiée et l'intégrité du bien essentiel retrouvée)#
+|Niveau « Intègre » ([small]#La donnée doit toujours être rigoureusement intègre)#
+
+|Données de la base métier
+|
+|
+|
+|X
+
+|Données archivées
+|
+|X
+|
+|
+
+|Données calculées stats entreprises
+|
+|
+|X
+|
+
+|Silo NoSQL des données Big Data avant consolidation
+|X
+|
+|
+|
+
+|Sources de l’application
+|
+|
+|
+|X
+
+|Avis d‘imposition en PDF
+|
+|
+|
+|X
+|====
+
+=== Exigences de confidentialité
+
+.Niveau de confidentialité exigée par classe de données
+[cols="e,e,e,e"]
+|====
+|Classe de données | Niveau « Public » ([small]#Tout le monde peut accéder à la donnée)#
+|Niveau Limité » ([small]#La donnée n’est accessible qu’aux personnes habilitées)#
+|Niveau « Réservé » ([small]#La donnée n’est accessible qu’au personnel interne habilité)#
+
+|Contenu éditorial
+|X
+|
+|
+|
+
+|Profil du compte du site Web
+|
+|X
+|
+|
+
+|Historique du compte
+|
+|
+|X
+|
+
+|Logs techniques des activités de l’internaute
+|
+|
+|X
+|
+|====
+
+[[exigences-identification]]
+=== Exigences d'identification
+Un utilisateur ne peut avoir qu’un identifiant et un identifiant ne peut être partagé par plusieurs utilisateurs. L'adresse e-mail personnelle est donc un bon identifiant.
+
+Un ID est non supprimable, non modifiable et non réutilisable
+
+[[exigences-authentification]]
+=== Exigences d'authentification
+
+Les facteurs d’authentification requis en fonction des situations sont (on peut exiger plusieurs occurrences du même facteur, utiliser autant de croix) :
+
+.Exigence d'authentification par cas d'utilisation
+[cols="e,e,e,e,e,e,e,e"]
+|====
+|Cas d’authentification
+|Mot de passe respectant la politique de mot de passe P
+|Clé publique ssh connue
+|OTP par Token
+|Biométrie
+|Connaissance de données métier
+|E-mail d’activation
+|Délégation d’authentification
+
+|Utilisateur déjà inscrit
+|X||||||
+
+|Création d’un compte
+|||||XX|X|
+
+|Modification du mot de passe
+|X|||||X|
+
+|Accès aux logs
+||X|||||
+
+|Ajout d’un bénéficiaire de virement
+|X||X||||
+
+|Application mobile Y
+|||||||X
+|====
+
+[[exigence-federation-identite]]
+=== Exigences de fédération d’identité
+L’identification et l’authentification seront externalisés au fournisseur d’identité Auth0 pour simplifier la gestion de la sécurité et réduire les coûts de développement et d’exploitation.
+
+=== Exigences de SSO et SLO
+Cette application Web métier devra fournir une authentification unique mutualisée avec celle des autres applications de l’intranet : une fois authentifié sur l’une des applications, l’agent ne doit pas avoir à se reconnecter (jusqu'à expiration de sa session). De même, une déconnexion depuis l’une des applications doit assurer la déconnexion de toutes les applications de l’intranet.
+
+=== Exigences de non répudiation
+
+.Besoins de non-répudiation
+[cols="e,e,e"]
+|===
+|Donnée signée|Origine du certificat client|Origine du certificat serveur
+
+|Déclaration d’impôt sur le revenu (données X, Y et Z)
+|PKI de l’administration fiscale
+|Verisign
+|===
+
+[[exigence-anonymat]]
+=== Exigences d'anonymat et de respect de la vie privée
+
+Par soucis de confidentialité en cas d’intrusion informatique, certaines données sont cryptées.
+
+Aucune donnée raciale, politique, syndicales, religieuse ou d’orientation sexuelle ne pourra être stockée sous quelque forme que ce soit dans le SI.
+
+En application du RGPD, un consentement explicite des utilisateurs dans la conservation de leurs données personnelles sera proposé.
+
+=== Exigences sur les habilitations
+Les personnes non connectées auront accès à tous les privilèges en lecture seule
+
+L’application s’appuiera sur une gestion des autorisations matricielle de type [rôles] -> [groupes ou utilisateurs] comme décrit plus bas. Le détail des autorisations sera donnée dans les SFD.
+
+====
+.Exemple de matrice de rôles
+[cols="e,e,e,e"]
+|===
+|_Groupe ou utilisateur_|_Rôle_ `suppression`|_Rôle_ `administration`|_Rôle_ `consultation données de base`
+
+|Groupe `g_usagers`
+|
+|
+|X
+
+|Groupe `@anonyme`
+|
+|
+|
+
+|Groupe `g_admin`
+|X
+|X
+|X
+
+|Utilisateur `xyz`
+|X
+|
+|X
+|===
+
+====
+
+[[exigences-tracabilite]]
+=== Exigences de traçabilité et d'auditabilité
+Toute intrusion dans le SI devra être détectée (dans la mesure du possible).
+
+Nous devons pouvoir reconstituer l’historique du dossier de tout patient à n’importe quelle date.
+
+
+.Données à conserver pour preuves
+[cols="e,e,e"]
+|===
+|Donnée|Objectif|Durée de rétention
+
+|Log complet (IP, heure GMT, détail) des commandes passées sur le site
+|Prouver que la commande a bien été passée
+|1 an
+
+|Date et contenu du mail de confirmation
+|Prouver que le mail de confirmation a bien été envoyé
+|2 ans
+
+|Avis d’imposition primitif avec signature numérique
+|Conserver le montant et de l’impôt.
+|5 ans
+|===
+
+== Mesures de sécurité
+
+=== Confidentialité
+
+Dispositifs répondant aux <<Exigences de confidentialité>> :
+
+.Mesures pour assurer le niveau de confidentialité demandé
+[cols="e,e,e"]
+|===
+|Classe de données|Niveau exigé|Mesures
+
+|Contenu éditorial
+|Public
+|Aucune, contenu en HTTP et HTTPS, pas d’authentification
+
+|Profil du compte du site Web
+|Limité
+|L’accès à ce contenu nécessite une authentification réussie par login/mot de passe
+
+|Historique du compte
+|Réservé
+|L’accès à ce contenu est réservé aux exploitants habilités, uniquement via des requêtes PL/SQL de la base de données
+
+|Logs des activités de l’internaute
+|Réservé
+|L’accès aux fichiers de log est réservé aux exploitants habilités (accès SSH à la machine M et mot de passe Unix)
+|===
+
+=== Identification
+
+Dispositifs répondant aux exigences d'identification :
+
+Pour assurer la non réutilisation des ID des comptes supprimés, une table d’historique sera ajoutée dans l’application et requêtée avant toute création de nouveau compte._
+
+=== Authentification
+
+Dispositifs répondant aux exigences d'authentification :
+
+L’authentification des internautes inscrits se fera par login/mot de passe (respectant la politique de mot de passe défini plus haut)
+Les mots de passe ne seront en aucun cas conservés mais stockés sous la forme de digest bcrypt.
+
+
+=== Anonymat et vie privée
+
+Dispositifs répondant aux exigences d'anonymat et de respect de la vie privée:
+
+Un audit interne sera mené une fois par an sur le contenu des données en base et les extractions à destination des partenaires.
+
+Le bandeau d’acceptation des cookies sera mis en ouvre sur toutes les pages de l’application React.
+
+=== Habilitations
+
+La gestion des autorisations sera gérée applicativement et stockée dans la base applicative PostgreSQL. Ces tables seront décrites dans le dossier de spécification.

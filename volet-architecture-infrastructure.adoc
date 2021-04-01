@@ -1,0 +1,258 @@
+= Volet infrastructure
+:sectnumlevels: 4
+:toclevels: 4
+:sectnums: 4
+:toc: left
+:icons: font
+:toc-title: Sommaire
+
+Dernière modification : {docdate}
+
+== Introduction
+Ceci est le point de vue infrastructure de l’application. Il décrit le déploiement des modules applicatifs dans leur environnement d’exécution cible et l'ensemble des dispositifs assurant leur bon fonctionnement.
+
+Les autres volets du dossier sont accessibles link:./README.adoc[d'ici].
+
+=== Documentation de Référence
+.Références documentaires
+[cols="1e,2e,5e,4e"]
+|====
+|N°|Version|Titre/URL du document|Détail
+
+|1|1|N/A
+|N/A
+
+|====
+
+== Non statué
+=== Points soumis à étude complémentaire
+.Points soumis à étude complémentaire
+[cols="1e,5e,2e,2e,2e"]
+|====
+|ID|Détail|Statut|Porteur du sujet | Échéance
+
+|EI1
+|N/A
+|EN_COURS
+|N/A
+|AVANT 2022
+
+|====
+
+=== Hypothèses
+
+.Hypothèses
+[cols="1e,5e"]
+|====
+|ID|Détail
+
+|HI1
+|Nous prenons l'hypothèse que d'ici à la MEP du projet, PostgreSQL 11 sera validé en interne.
+|====
+
+== Contraintes
+
+=== Contraintes sur la disponibilité
+
+==== MTTD
+
+L'hypervision se fera 24/7/365
+
+Le service support production est disponible durant les heures de bureau mais une astreinte est mise en place avec alerting par e-mail et SMS en 24/7 du lundi au vendredi.
+
+==== GTR
+Comme toute application hébergée au datacenter OVH, l’application disposera de la présence d’exploitants de 7h à 20h jours ouvrés. Aucune astreinte n’est possible.
+
+==== Outils et normes de supervision
+
+Les batchs doivent pouvoir se lancer sur un endpoint REST.
+
+Un batch en erreur ne doit pas pouvoir se relancer sans un acquittement humain.
+
+
+==== Interruptions programmées
+On estime l'interruption de chaque serveur à 5 mins par mois. Le taux de disponibilité effectif des serveurs en prenant en compte les interruptions programmées système est donc de 99.99 %.
+
+Suite aux mises à jour de sécurité de certains packages RPM (kernel, libc…), les serveurs RHEL sont redémarrés automatiquement la nuit du mercredi suivant la mise à jour. Ceci entraînera une indisponibilité de 5 mins en moyenne 4 fois par an.
+
+==== Niveau de service du datacenter
+
+.niveaux Tier des datacenters (Source : Wikipedia)
+|====
+Tier|Caractéristiques|Taux de disponibilité| Indisponibilité statistique annuelle |Maintenance à chaud possible ? | Tolérance
+aux pannes ?
+
+|Tier I
+|Non redondant
+|99,671 %
+|28,8 h
+|Non
+|Non
+|Tier II
+|Redondance partielle
+|99,749 %
+|22 h
+|Non
+|Non
+|Tier III
+|Maintenabilité
+|99,982 %
+|1,6 h
+|Oui
+|Non
+|Tier IV
+|Tolérance aux pannes
+|99,995 %
+|0,4 h
+|Oui
+|Oui
+|====
+
+==== Gestion des catastrophes
+Pour rappel, les VM sont répliquées dans le datacenter de secours via la technologie vSphere Metro Storage Cluster utilisant SRDF en mode asynhrone pour la réplication inter-baies. En cas de catastrophe, la VM répliquée sur le site de secours est à jour et prête à démarrer.
+
+=== Hébergement
+Cette application sera hébergée en cloud dans le datacenter OVH de Strasbourg (RIP il a brulé...) et il sera administré par l’équipe OVH de Paris.
+
+=== Contraintes réseau
+Pas de contraintes réseau
+
+=== Contraintes de déploiement
+Une VM ne doit héberger qu'une unique instance Postgresql
+
+=== Contraintes de logs
+Une application ne doit pas produire plus de 1To de logs / mois.
+La durée de rétention maximale des logs est de 3 mois
+
+=== Contraintes de sauvegardes et restaurations
+L'espace disque maximal pouvant être provisionné par un projet pour les backups est de 10 To sur HDD.
+
+=== Coûts
+Les frais de services Cloud OVH ne devront pas dépasser 500€/ an pour ce projet.
+
+== Exigences
+
+=== Plages de fonctionnement
+.Plages de fonctionnement
+[cols="1e,5e,2e"]
+|====
+|Plage| Heures | Détail
+
+|1
+|24 / 7 / 365
+|Ouverture Internet aux usagers
+|====
+
+=== Exigences de disponibilité
+
+.Durée d’indisponibilité maximale admissible par plage
+[cols="1e,5e"]
+|====
+|Plage| Indisponibilité maximale
+
+|1
+|24h, maximum 7 fois par an
+|====
+
+=== Exigences de robustesse
+Pas plus de 0.001% de requêtes en erreur
+
+L'utilisateur ne devra pas perdre son panier d'achat même en cas de panne
+
+=== Exigences de RPO
+On ne doit pas pouvoir perdre plus d'une journée de données applicatives
+
+=== Exigences d'archivage
+Comme exigé par l'article L.123-22 du code de commerce, les données comptables devront être conservées au moins dix ans.
+
+Les pièces comptables doivent être conservées en ligne (en base) au moins deux ans puis peuvent être archivées pour conservation au moins dix ans de plus. Une empreinte SHA256 sera calculée au moment de l'archivage et stockée séparément pour vérification de l'intégrité des documents en cas de besoin.
+
+=== Exigences de purges
+Les dossiers de plus de six mois seront purgées (après archivage)
+
+=== Exigences de déploiements et de mise à jour
+
+==== Coté serveur
+
+Installation scripté avec Ansible via des images dockers et l'utilisation des paquets apt
+
+==== Coté client
+
+Mises a jour automatiques avec les PR mergés de Gitlab CI
+
+==== Stratégie de déploiement spécifiques
+Type de déploiement greenL'application sera déployée sur un mode blue/green, c'est à dire complètement installée sur des machines initialement inaccessibles puis une bascule DNS permettra de pointer vers les machines disposant de la dernière version.
+
+
+=== Exigences de gestion de la concurrence
+Tous les composants de cette application doivent pouvoir fonctionner en concurrence. En particulier, la concurrence batch/IHM doit toujours être possible car les batchs devront pouvoir tourner de jour en cas de besoin de rattrapage
+
+=== Exigences d'écoconception
+La consommation électrique moyenne causée par l’affichage d'une page Web ne devra pas dépasser 10mWH, soit pour 10K utilisateurs qui affichent en moyenne 100 pages 200 J par an : 50 g/KWH x 10mWH x 100 x 10K x 200 = 100 Kg équivalent CO2 / an.
+
+== Architecture cible
+
+=== Principes de l'architecture technique
+
+* Les composants applicatifs exposés à Internet dans une DMZ protégée derrière un pare-feu puis un reverse-proxy et sur un VLAN isolé.
+* Concernant les interactions entre la DMZ et l’intranet, un pare-feu ne permet les communications que depuis l’intranet vers la DMZ
+* Les clusters actifs/actifs seront exposés derrière un LVS + Keepalived avec direct routing pour le retour.
+
+=== Disponibilité
+
+.Quelques solutions de disponibilité (hors disponibilité du datacenter)
+|====
+|Solution|Coût |Complexité de mise en œuvre indicative |Amélioration de la disponibilité indicative
+
+|Disques en RAID 1 |XXX|X|XXX
+|Disques en RAID 5 |X|X|XX
+|Redondance des alimentations et autres composants |XX|X|XX
+|Bonding des cartes Ethernet|XX|X|X
+|Cluster actif/passif|XX|XX|XX
+|Cluster actif/actif (donc avec LB)|XXX|XXX|XXX
+|Serveurs/matériels de spare|XX|X|XX
+|Bonne supervision système|X|X|XX
+|Bonne supervision applicative|XX|XX|XX
+|Systèmes de test de vie depuis un site distant|X|X|XX
+|Astreintes dédiées à l’application, 24/7/365|XXX|XX|XXX
+|Copie du backup du dernier dump de base métier sur baie SAN (pour restauration express)|XX|X|XX
+|====
+
+Pour atteindre la disponibilité de 98 % exigée, les dispositifs de disponibilité envisagés sont les suivants :
+
+* Tous les serveurs en RAID 5 + alimentations redondées.
+* Répartiteur HAProxy + keepalived actif/passif mutualisé avec les autres applications.
+* Cluster actif /actif de deux serveurs Apache + mod_php.
+* Serveur de spare pouvant servir à remonter la base MariaDB depuis le backup de la veille en moins de 2h.
+
+=== Environnements
+
+.Environnements
+[cols='1,2,2,2']
+|====
+|Environnement| Rôle| Contenu | Couloir
+
+|Développement
+|Déploiement continu (CD) pour les développeurs
+|Branche `develop` déployée à chaque commit
+|Un seul
+
+|Recette
+|Recette fonctionnelle par les testeurs
+|Tag déployé à la fin de chaque Sprint
+|UAT1 et UAT2
+|====
+
+=== Sauvegardes et restaurations
+Jeu de 21 sauvegardes sur un an :
+
+* 6 sauvegardes journalières incrémentales ;
+* 1 sauvegarde complète le dimanche et qui sert de sauvegarde hebdomadaire ;
+* 3 sauvegardes hebdomadaires correspondant aux 3 autres dimanches. Le support du dernier dimanche du mois devient le backup mensuel ;
+* 11 sauvegardes mensuelles correspondant aux 11 derniers mois.
+
+=== Archivage
+Les relevés bancaires de plus de 10 ans seront archivés sur bande LTO et disque dur. Les deux supports seront stockés en coffre dans deux banques différentes.
+
+=== Migration
+En cas de problème sur le nouveau composant, un retour arrière sera prévu : les anciennes données seront restaurées dans les deux heures et les nouvelles données depuis la bascule seront reprise par le script S1.
