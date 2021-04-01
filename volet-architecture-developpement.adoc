@@ -14,8 +14,6 @@ Ceci est le point de vue développement de l’application. Il décrit le code �
 
 Les autres volets du dossier sont accessibles link:./README.adoc[d'ici].
 
-Le glossaire du projet est disponible link:glossaire.adoc[ici]. Nous ne redéfinirons pas ici les termes fonctionnels ou techniques utilisés.
-
 == Non statué
 
 === Points soumis à étude complémentaire
@@ -26,7 +24,7 @@ Le glossaire du projet est disponible link:glossaire.adoc[ici]. Nous ne redéfin
 |ID|Détail|Statut|Porteur du sujet  | Échéance
 
 |ED1
-|Le choix Gatsby JS ou Next JS pour le frontend est encore soumis à étude. Ceci n’impacte pas la partie back des services REST
+|Le choix Gatsby JS ou Next JS pour le frontend est encore soumis à étude. Ceci n’impacte pas la partie back des services REST et GQL
 |EN_COURS
 |Equipe méthodes et outils
 |AVANT Juin 2021
@@ -48,79 +46,31 @@ Le glossaire du projet est disponible link:glossaire.adoc[ici]. Nous ne redéfin
 == Contraintes
 
 === Contraintes réseau
-[TIP]
-====
-Lister ici les contraintes relatives à l'architecture logicielle, ceci inclut par exemple mais pas seulement :
-
 * La couverture de code devra être d'au moins 90%.
 * L'équipe Front-End utilisera des licences webstorm pour faciliter le développement des tests unitaires.
-* la téchnologie de tests unitaires sera la librairie Testing Library accompagné du moteur de test Jest
-* l'application sera construite, testée et déployée en continu à chaque push via la plateforme Gitlab-ci
+* La téchnologie de tests unitaires sera la librairie Testing Library accompagné du moteur de test Jest
+* L'application sera construite, testée et déployée en continu à chaque push via la plateforme Gitlab-ci
 * Les normes et seuils de qualité de code applicables
 * Les composants de la partie front-end seront développer en toute isolation a l'aide de la librarie Storybook.
 
-====
-
-
 == Exigences non fonctionnelles
-
-[TIP]
-====
-Contrairement aux contraintes qui fixaient le cadre auquel toute application devait se conformer, les exigences non fonctionnelles sont données par les porteurs du projet (MOA en général). Prévoir des interviews pour les déterminer. Si certaines exigences ne sont pas réalistes, le mentionner dans le référentiel des points à statuer.
-====
 
 === Accessibilité
 
-[TIP]
-====
-Cette application doit-elle être accessible aux non/mal voyants ? malentendants ?
-
-Si oui, quelle niveau d’accessibilité ?
-Se référer de préférence au Référentiel Général d’Accessibilité (https://references.modernisation.gouv.fr/rgaa-accessibilite/#menu[RGAA]) qui préconise un niveau WCAG 2.0 AA :
-
-Il existe d’autres normes d’accessibilité (WCAG, AccessiWeb …) . Attention à correctement évaluer le niveau visé (ni sur-qualité, ni sous-qualité) :
-
-* Atteindre un niveau d’accessibilité très élevé peut être coûteux et contraignant technologiquement. Il demande également de bonnes compétences (accessibilité, HTML5/CSS3 en particulier) et des profils rares.
-* La loi est de plus en plus stricte pour les administrations qui doivent respecter un niveau d’accessibilité suffisant (loi  n°2005-102 du 11 février 2005 pour l’égalité des droits et des chances, la participation et la citoyenneté des personnes handicapées). « Tous les sites publics européens doivent atteindre le double A (AA) du W3C/WAI ».
-====
+L'application ne pourra pas être accessible aux non/mal voyants ou malentendants.
 
 === Ergonomie
 
 ==== Charte ergonomique
-
-[TIP]
-====
-En général, on se réfère ici à la charte ergonomique de l’organisme. Lister néanmoins d’éventuelles spécificités. Ne pas reprendre les contraintes d’accessibilité listées plus haut.
-====
+A definir par les gérants du projet Cassiopée
 
 ==== Spécificités sur les widgets
-
-[TIP]
-====
-Des comportements ergonomiques très précis peuvent impacter assez fortement l’architecture et imposer une librairie de composants graphiques ou une autre. Il est fortement déconseillé de personnaliser des librairies existantes (coût de maintenance très élevé, grande complexité). Bien choisir sa librairie ou restreindre ses besoins.
-====
-====
-Exemple 1 : les tableaux devront être triables suivant plusieurs colonnes.
-====
-====
-Exemple 2 : de nombreux écrans seront pourvus d’accordéons
-====
+Les tableaux des produits et articles blog côté panel administrateur devront être triables suivant plusieurs colonnes.
 
 ==== Polices de caractère
-
-[TIP]
-====
-Décrire ici les polices de caractère à utiliser pour les pages Web, les applications ou les documents composés.
-
-Le choix des polices suit des contraintes de licences. Afin d'assurer une sécurité juridique au projet, attention aux polices commerciales soumises à royalties (en particulier les polices appartement à Microsoft comme Times New Roman, Courier, Verdana, Arial) et qui ne permettent pas de produire gratuitement des documents sans passer par leurs éditeurs (Word, ...).
-
-Voir par exemple la police https://www.gouvernement.fr/charte/charte-graphique-les-fondamentaux/la-typographie[Marianne] préconisée par le gouvernenement en tant que police à chasse variable.
-
-Redhat propose quatre familles de polices https://fr.wikipedia.org/wiki/Liberation_(police_d%27%C3%A9criture)[Liberation Mono] en licence Open Source sécurisante sur un plan juridique et compatible métriquement avec le Monotype, le Courrier New, l'Arial et le Times New Roman.
-====
+Roboto, simple et efficace
 
 ==== Site Web adaptatif
-
 
 L'application sera complétement résponsible. Des tests devront démonter que le contenu du site dépend du support utiliser pour acceder a l'application (mobile, tablette, desktop).
 
@@ -153,7 +103,7 @@ L'application devra être développer avec la technologie JamStack ( gatsby JS o
 
 ==== Filière technique retenue
 
-Utilisation de Reacts.js à titre expérimental au sein de l'organisation. Validé en commité architecture le ...
+Utilisation de Reacts.js à titre expérimental au sein de l'organisation.
 
 ==== Composants logiciels
 
@@ -175,19 +125,11 @@ Utilisation de Reacts.js à titre expérimental au sein de l'organisation. Valid
 
 IMPORTANT: Voir les exigences MOA dans le link:./volet-architecture-dimensionnement.adoc[volet dimmensionnement].
 
-
-[TIP]
-====
-Même si des campagnes de performance sont prévues et que des analyses de performances seront intégrées à la CI/CD, l'expérience montre que 50% des problèmes de performance auraient pu être détectés dès le développement.
-Il est donc important que les développeurs profilent leur code, dès leur poste de travail (à prévoir dans le Definition Of Done du projet). Il ne sera pas possible de détecter tous les problèmes (scalabilité, concurrence, robustesse, tuning des caches, ...) mais la plupart des problèmes de temps de réponse. Nous présentons ici quelques pistes très basiques et à la portée de tout développeur.
-
-
 Coté Frontend :
 
 * Limiter la complexité des CSS (sélecteurs ou fonctions en particulier)
 * Utiliser un profiler (comme celui de Chrome)
 * Privilégier les appels asynchrones
-* ...
 
 Coté Backend :
 
@@ -213,7 +155,7 @@ Frontend et backend :
 * Prévoir des endpoints multivalués (exemple: `GET /personnes?list=id1,id2,...`) pour récupérer plusieurs éléments à la fois
 (doit se concrétiser par un seul `SELECT WHERE .. IN` dans la requête finale, pas une boucle dans le code !)
 
-====
+
 
 WARNING: Ne pas tomber à l'inverse dans l'optimisation prématurée "source de tous les problèmes" selon Donald Knuth. Ecrire le code le plus simple possible et suivre un bon design, ne l'optimiser qu’ensuite.
 N'optimiser que si cela vaut le coût (loi de Pareto). Commencer par les optimisations les plus significatives et ne pas perdre son temps à grappiller des microsecondes voire nanosecondes.
@@ -225,7 +167,7 @@ Les jobs GITLAB produiront le logiciel sous forme de containers Docker si  tous 
 
 === Normes de développement et qualimétrie
 
-Les langues utilisées pour le code seront le  français pour les termes fonctionnels (il est impératif d'utiliser les termes métiers comme préconisé par le DDD) et l'anglais pour les termes techniques génériques.
+Les langues utilisées pour le code seront le français pour les termes fonctionnels (il est impératif d'utiliser les termes métiers comme préconisé par le DDD) et l'anglais pour les termes techniques génériques.
 
 === Spécificités des tests
 
@@ -330,44 +272,10 @@ détecter un maximum de bugs avant les tests d'UAT.
 * Les campagnes de performance intégreront une analyse fine de la consommation de bande passante et en cycles CPU même si les exigences en temps de réponses sont couvertes, ceci pour identifier des optimisations permettant de répondre aux exigences d'éco-conception si elles ne sont pas atteintes.
 
 ==== Gestion des transactions
-
-[TIP]
-====
-Lister ici les décisions prises concernant la gestion des transactions. Ceci est surtout utile pour un système distribué. Quelques exemples de problématiques :
-
-* Autorise-t-on les mises jours sur de multiples composants lors d'une même requête ?
-* Si oui, assurons nous le caractère ACID du tout (via le mode XA par exemple) ?
-* Quel moteur transactionnel utilisons nous ?
-* Quel niveau d'isolation transactionnelle (read commited, uncommited, repeatable read, serializable) ?
-* Si aucun moniteur transactionnel n'est utilisé (appel de plusieurs services REST en mise à jour par exemple), prévoit-t-on des transactions compensatoires en cas d'échec de l'une des mises à jours ?
-
-====
-====
-Exemple : nos ressources n'étant pas transactionnelles (services REST), et voulant éviter de faire des transactions compensatoires, il est interdit d'appeler deux services en mise à jour de façon synchrone. Au besoin, nous utiliserons une file pour effectuer des mises à jour au fil de l'eau.
-====
+Nos ressources étant transactionnelles (services REST/GQL), il est autoriser d'appeler deux services en mise à jour de façon synchrone.
 
 ==== Gestion des erreurs
-
-[TIP]
-====
-Comment gère-t-on erreurs ? Exemples de points à traiter :
-
-* Différencions-nous erreurs fonctionnelles (erreurs fonctionnelles prévues) et techniques ? Prévoir un diagramme de classe.
-* Comment logue t-on les erreurs ? quel niveau de log ?
-* Où sont attrapées les exceptions ? au plus tôt ou en début d'appel de façon centralisée ?
-* Utilise-t-on les exceptions standards du langage (`IOException`,...) ou notre propre jeu d'exceptions ?
-* La liste des erreurs est-elle consolidée ? documentée ?
-* Affecte-t-on des codes erreur ?
-* Affiche-on les stack-traces complètes ? si oui, coté serveur et coté client ?
-* Gère-t-on les rejeux ? si oui, espace-t-on les rejeux ?
-* Comment gère-t-on les timeouts ?
-
-====
-====
-Exemple (Spring) :
-
-les erreurs techniques (imprévues) comme le timeout à un appel de service REST sont catchées au plus haut niveau de l'application (via un ErrorHandler). Toutes ses informations sont loguées avec la stack-trace complète mais l'appelant ne doit recupérer que le code erreur générique XYZ sans la stack-trace (pour raison de sécurité).
-====
+Les erreurs techniques (imprévues) comme le timeout à un appel de service REST sont catchées au plus haut niveau de l'application (via un ErrorHandler). Toutes ses informations sont loguées avec la stack-trace complète mais l'appelant ne doit recupérer que le code erreur générique XYZ sans la stack-trace (pour raison de sécurité).
 
 === Gestion de la configuration
 
@@ -390,19 +298,8 @@ La configuration sera injectée au lancement (non modifiable à chaud) via des v
 
 === Gestion de la concurrence
 
-[TIP]
-====
-Comment gère-t-on les accès concurrents ? Exemples de points à traiter :
+Tous les controllers seront en scope singleton et ne doivent donc en aucun cas stocker d'état dans leurs attributs pour éviter des race conditions.
 
-* Quel scope pour les objets (si utilisation d'un moteur IoC) ?
-* Les objets doivent-il être sans état ?
-* Quels méthodes doivent-elles être synchronisées ?
-* Risques de race condition ? de starvation ? de dead locks ?
-
-====
-====
-Exemple  (Spring MVC) : Tous les controllers seront en scope singleton et ne doivent donc en aucun cas stocker d'état dans leurs attributs pour éviter des race conditions.
-====
 
 === Encodage
 
@@ -467,12 +364,4 @@ if (isDebugEnabled){
 ====
 
 === Provisionning et mises à jour des données
-
-[TIP]
-====
-Décrire comment les DDL (structures de tables en base de données) et les données initiales (comme des nomenclatures) seront gérées puis mis à jour.
-====
-
-====
-Exemple : Nous utiliserons LiquiBase embarqué dans les war pour créer et mettre à jour les DDL de la base. Il n'y aura donc pas de scripts SQL à lancer, les requêtes nécessaires seront effectuées directement par l'application lors de son démarrage.
-====
+Nous utiliserons LiquiBase embarqué dans les war pour créer et mettre à jour les DDL de la base. Il n'y aura donc pas de scripts SQL à lancer, les requêtes nécessaires seront effectuées directement par l'application lors de son démarrage.
