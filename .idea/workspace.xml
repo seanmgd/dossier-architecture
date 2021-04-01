@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="99a0de36-e6c7-448a-adcd-f5aa0318fc1b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/README.adoc" beforeDir="false" afterPath="$PROJECT_DIR$/README.adoc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/volet-architecture-dimensionnement.adoc" beforeDir="false" afterPath="$PROJECT_DIR$/volet-architecture-dimensionnement.adoc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +35,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1617265926483</updated>
-      <workItem from="1617265927648" duration="5077000" />
+      <workItem from="1617265927648" duration="5672000" />
+      <workItem from="1617282301283" duration="2935000" />
     </task>
     <servers />
   </component>
