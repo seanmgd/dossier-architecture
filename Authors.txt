@@ -1,0 +1,7 @@
+Nom: MAGAUD
+Prenom: Sean
+tâches: volet-applicative, volet-dimensionnement, volet-infra/secu
+<-------------------------------------------------------------------->
+Nom: BARKA
+Prenom: Ramy
+tâches: volet-developpement, diagrammes UML
